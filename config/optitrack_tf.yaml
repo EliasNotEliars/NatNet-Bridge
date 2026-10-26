@@ -1,0 +1,27 @@
+# Frame names must match the NatNet messages and drone URDF.
+world_frame: world
+# optitrack frame is supplied by natnet.launch's existing frame_id argument (optitrack_world by default).
+marker_frame: tello_mocap
+base_frame: tello_base
+pose_timeout: 1.0
+
+# Child optitrack_world expressed in parent world.
+# Assumption:
+# - SAME ORIGIN
+# - Optitrack frame: X=left, Y=up, Z=forward
+# - World frame: X=forward, Y=left, Z=up
+
+# Quaternion order is x, y, z, w. Equivalent RPY: [pi/2, 0, -pi/2].
+# DO NOT use this rotation for a stream that has already been changed to Z-up.
+world_to_optitrack:
+  translation: [0.0, 0.0, 0.0]
+  rotation_xyzw: [0.5, 0.5, 0.5, 0.5]
+
+# Child tello_base expressed in parent tello_mocap.
+# Identity is an INITIAL ASSUMPTION: pivot at drone origin and local axes FLU.
+# This is a mounting calibration, not the world axis conversion above.
+# If the marker pivot/axes differ from the drone base, enter the measured
+# position of tello_base in marker coordinates and its orientation here.
+mocap_to_base:
+  translation: [0.0, 0.0, 0.0]
+  rotation_xyzw: [0.0, 0.0, 0.0, 1.0]

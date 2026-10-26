@@ -1,0 +1,36 @@
+<launch>
+        <!-- Default lab network settings, 20.10.2026.-->
+        
+        <arg name="client_address" default="10.0.0.1"/>
+        <arg name="server_address" default="10.0.0.2"/>
+        <arg name="use_multicast" default="true"/>
+        <arg name="frame_id" default="optitrack_world"/>
+
+        <arg name="bodies_config" default="$(find natnet_bridge)/config/rigid_bodies.yaml"/>
+        <!-- In rigid_bodies.yaml, each number key corresponds to a streaming ID from Motive. 
+             Configure the dictionary to match other project setups. The assigned names determine
+             the pose topic names. -->
+
+        <!-- TF integration for one selected rigid body (modify rigid_body_id to change).
+             Frame names and geometric calibration live in tf_config. -->
+             
+        <arg name="publish_tf" default="false"/>
+        <arg name="rigid_body_id" default="2"/>
+        <arg name="tf_config" default="$(find natnet_bridge)/config/optitrack_tf.yaml"/>
+
+        <node pkg="natnet_bridge" type="natnet_node.py" name="natnet_node" output="screen">
+                <rosparam command="load" file="$(arg bodies_config)"/>
+                <param name="client_address" value="$(arg client_address)" type="str"/>
+                <param name="server_address" value="$(arg server_address)" type="str"/>
+                <param name="use_multicast" value="$(arg use_multicast)" type="bool"/>
+                <param name="frame_id" value="$(arg frame_id)" type="str"/>
+        </node>
+
+        <node if="$(arg publish_tf)" pkg="natnet_bridge" type="optitrack_tf.py"
+                name="optitrack_tf" output="screen">
+                <rosparam command="load" file="$(arg bodies_config)"/>
+                <rosparam command="load" file="$(arg tf_config)"/>
+                <param name="optitrack_frame" value="$(arg frame_id)" type="str"/>
+                <param name="rigid_body_id" value="$(arg rigid_body_id)" type="int"/>
+        </node>
+</launch>

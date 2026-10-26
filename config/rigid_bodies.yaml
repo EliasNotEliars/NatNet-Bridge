@@ -1,0 +1,5 @@
+# assign a name to each rigid body ID (check streaming ID  under Assets -> Properties on Motive)
+
+rigid_body_names:
+  "1": cs200
+  "2": tello
